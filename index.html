@@ -1,10 +1,152 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Web Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            padding: 20px;
+        }
+
+        /* Left Side (UK Column) */
+        .left-side {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 20px;
+            border-right: 1px solid #ccc;
+        }
+
+        .column {
+            display: grid;
+            gap: 20px;
+        }
+
+        .item {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .item p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        button.copy {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        button.copy:hover {
+            background-color: #27ae60;
+        }
+
+        button.delete {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        button.delete:hover {
+            background-color: #c0392b;
+        }
+
+        /* Right Side (Form) */
+        .right-side {
+            flex: 1;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        form input,
+        form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        form button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        form button.uk {
+            background-color: #3498db;
+            color: white;
+        }
+
+        form button.au {
+            background-color: #e67e22;
+            color: white;
+        }
+
+        form button.uk:hover {
+            background-color: #2980b9;
+        }
+
+        form button.au:hover {
+            background-color: #c0392b;
+        }
+    </style>
 </head>
 <body>
 
@@ -42,6 +184,131 @@
     </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+    const ukItemsContainer = document.getElementById('uk-items-container');
+    const auItemsContainer = document.getElementById('au-items-container');
+    const itemForm = document.getElementById('item-form');
+
+    // Load saved items from localStorage
+    const savedItems = JSON.parse(localStorage.getItem('items')) || [];
+
+    savedItems.forEach(item => {
+        if (item.region === '(UK)') {
+            addItemToDOM(item, 'uk-items-container');
+        } else if (item.region === '(AU)') {
+            addItemToDOM(item, 'au-items-container');
+        }
+    });
+
+    // Function to add an item to the DOM
+    function addItemToDOM(item, containerId) {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'item';
+
+        // Title without Region
+        const titleDiv = document.createElement('p');
+        titleDiv.textContent = item.title.replace(/\s\(.*\)/, ''); // Remove region from title
+        itemDiv.appendChild(titleDiv);
+
+        // Description
+        const descriptionDiv = document.createElement('p');
+        descriptionDiv.textContent = item.description;
+        itemDiv.appendChild(descriptionDiv);
+
+        // Price
+        const priceDiv = document.createElement('p');
+        priceDiv.textContent = `Price: $${item.price}`;
+        itemDiv.appendChild(priceDiv);
+
+        // Controls (Copy and Delete)
+        const controlsDiv = document.createElement('div');
+        controlsDiv.className = 'controls';
+
+        // Copy Title Button
+        const copyTitleButton = document.createElement('button');
+        copyTitleButton.className = 'copy';
+        copyTitleButton.textContent = 'Copy Title';
+        copyTitleButton.onclick = () => {
+            navigator.clipboard.writeText(titleDiv.textContent); // Copy only the title
+            alert(`"${titleDiv.textContent}" copied to clipboard!`);
+        };
+        controlsDiv.appendChild(copyTitleButton);
+
+        // Copy Description Button
+        const copyDescriptionButton = document.createElement('button');
+        copyDescriptionButton.className = 'copy';
+        copyDescriptionButton.textContent = 'Copy Description';
+        copyDescriptionButton.onclick = () => {
+            navigator.clipboard.writeText(descriptionDiv.textContent); // Copy only the description
+            alert(`"${descriptionDiv.textContent}" copied to clipboard!`);
+        };
+        controlsDiv.appendChild(copyDescriptionButton);
+
+        // Copy Price Button
+        const copyPriceButton = document.createElement('button');
+        copyPriceButton.className = 'copy';
+        copyPriceButton.textContent = 'Copy Price';
+        copyPriceButton.onclick = () => {
+            navigator.clipboard.writeText(priceDiv.textContent); // Copy only the price
+            alert(`"${priceDiv.textContent}" copied to clipboard!`);
+        };
+        controlsDiv.appendChild(copyPriceButton);
+
+        // Delete Button
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'delete';
+        deleteButton.textContent = 'Delete';
+        deleteButton.onclick = () => {
+            itemDiv.remove();
+            savedItems.splice(savedItems.indexOf(item), 1);
+            localStorage.setItem('items', JSON.stringify(savedItems)); // Save immediately
+        };
+        controlsDiv.appendChild(deleteButton);
+
+        itemDiv.appendChild(controlsDiv);
+
+        // Append item to the appropriate container
+        const container = document.getElementById(containerId);
+        container.appendChild(itemDiv);
+
+        // Save the item to localStorage immediately
+        localStorage.setItem('items', JSON.stringify(savedItems));
+    }
+
+    // Handle form submission
+    itemForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Get values from inputs
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const price = document.getElementById('price').value;
+
+        if (!title || !description || !price) return;
+
+        // Determine the region based on the button clicked
+        const regionButton = event.submitter; // Get the button that triggered the form submission
+        const region = regionButton.classList.contains('uk') ? '(UK)' : '(AU)';
+
+        // Create new item object
+        const newItem = {
+            title: `${title} ${region}`,
+            description,
+            price,
+            region
+        };
+
+        // Save the item to localStorage immediately
+        savedItems.push(newItem);
+        localStorage.setItem('items', JSON.stringify(savedItems));
+
+        // Add the item to the appropriate column
+        addItemToDOM(newItem, `${region.toLowerCase()}-items-container`);
+
+        // Clear form inputs
+        itemForm.reset();
+    });
+</script>
+
 </body>
 </html>
