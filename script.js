@@ -1,9 +1,12 @@
+ console.log('Script Loaded'); // Debugging log
+
 const ukItemsContainer = document.getElementById('uk-items-container');
 const auItemsContainer = document.getElementById('au-items-container');
 const itemForm = document.getElementById('item-form');
 
 // Load saved items from localStorage
-const savedItems = JSON.parse(localStorage.getItem('items')) || [];
+let savedItems = JSON.parse(localStorage.getItem('items')) || [];
+console.log('Loaded Saved Items:', savedItems); // Debugging log
 
 savedItems.forEach(item => {
     if (item.region === '(UK)') {
@@ -75,6 +78,7 @@ function addItemToDOM(item, containerId) {
         itemDiv.remove();
         savedItems.splice(savedItems.indexOf(item), 1);
         localStorage.setItem('items', JSON.stringify(savedItems));
+        console.log('Updated Saved Items:', savedItems); // Debugging log
     };
     controlsDiv.appendChild(deleteButton);
 
@@ -99,6 +103,7 @@ itemForm.addEventListener('submit', function(event) {
     // Determine the region based on the button clicked
     const regionButton = event.submitter; // Get the button that triggered the form submission
     const region = regionButton.classList.contains('uk') ? '(UK)' : '(AU)';
+    console.log('Region:', region); // Debugging log
 
     // Create new item object
     const newItem = {
@@ -111,6 +116,7 @@ itemForm.addEventListener('submit', function(event) {
     // Save the item to localStorage
     savedItems.push(newItem);
     localStorage.setItem('items', JSON.stringify(savedItems));
+    console.log('Updated Saved Items:', savedItems); // Debugging log
 
     // Add the item to the appropriate column
     addItemToDOM(newItem, `${region.toLowerCase()}-items-container`);
