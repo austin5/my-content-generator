@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -189,17 +189,6 @@
     const auItemsContainer = document.getElementById('au-items-container');
     const itemForm = document.getElementById('item-form');
 
-    // Load saved items from localStorage
-    const savedItems = JSON.parse(localStorage.getItem('items')) || [];
-
-    savedItems.forEach(item => {
-        if (item.region === '(UK)') {
-            addItemToDOM(item, 'uk-items-container');
-        } else if (item.region === '(AU)') {
-            addItemToDOM(item, 'au-items-container');
-        }
-    });
-
     // Function to add an item to the DOM
     function addItemToDOM(item, containerId) {
         const itemDiv = document.createElement('div');
@@ -260,8 +249,6 @@
         deleteButton.textContent = 'Delete';
         deleteButton.onclick = () => {
             itemDiv.remove();
-            savedItems.splice(savedItems.indexOf(item), 1);
-            localStorage.setItem('items', JSON.stringify(savedItems)); // Save immediately
         };
         controlsDiv.appendChild(deleteButton);
 
@@ -270,9 +257,6 @@
         // Append item to the appropriate container
         const container = document.getElementById(containerId);
         container.appendChild(itemDiv);
-
-        // Save the item to localStorage immediately
-        localStorage.setItem('items', JSON.stringify(savedItems));
     }
 
     // Handle form submission
@@ -297,10 +281,6 @@
             price,
             region
         };
-
-        // Save the item to localStorage immediately
-        savedItems.push(newItem);
-        localStorage.setItem('items', JSON.stringify(savedItems));
 
         // Add the item to the appropriate column
         addItemToDOM(newItem, `${region.toLowerCase()}-items-container`);
